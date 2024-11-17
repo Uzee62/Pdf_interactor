@@ -45,5 +45,5 @@ def process_pdf(uploaded_file):
             main_placeholder.text("Vector database created!...✅✅✅")   
             
         else:
-            st.error("No documents found after processing the uploaded files.")
+            st.error("No documents found after processing the uploaded files or the pdf is corrupted / unsupported.")
         
