@@ -72,8 +72,17 @@ if prompt1 and "vectors" in st.session_state:
     
     response = retrieval_chain.invoke({'input': prompt1})
 
-    st.write(response['answer'])
+    # st.write(response['answer'])
     
+    #Get the respose in the card
+    st.markdown(
+    f"""
+    <div class="card">
+        <div class="response">{response['answer']}</div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
     
     
 #Display similar chunks with an expander

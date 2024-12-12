@@ -68,3 +68,18 @@ p, ol, ul, dl {
     padding: 2rem 1rem 10rem;
     max-width: 68rem;
 }
+
+
+.card {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+.response {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333333;
+}
