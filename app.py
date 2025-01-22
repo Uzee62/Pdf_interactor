@@ -36,7 +36,7 @@ llm = ChatGroq(
 prompt = ChatPromptTemplate.from_template(
     """
     Answer the questions based on the provided context only.
-    Please provide the most accurate response based on the question. Try to answer in detail in 200 words
+    Please provide the most accurate response based on the question. Try to answer in detail in 1500 words
     <context>
     {context}
     <context>
@@ -44,15 +44,19 @@ prompt = ChatPromptTemplate.from_template(
     """
 )
 
-st.title(f"let's Interact with pdf's")
+input_method = st.sidebar.selectbox("Choose a method" , ["Choose input method...","Interact with Doc", "Get Ques from Doc"])
+
+
+
 st.sidebar.title("Upload your pdf")
 
 main_placeholder = st.empty()
-
+#Document upload
 uploaded_file = st.sidebar.file_uploader("_____________________________________", type="pdf", accept_multiple_files=True)
 st.sidebar.write("Press Submit to process:")
 process = st.sidebar.button("Submit")
 
+#Document processing to convert it into vectors
 if process:
     if uploaded_file:
         # Process the uploaded PDF file
@@ -60,43 +64,69 @@ if process:
     else:
         st.warning("Please upload a PDF file.")
         
+if input_method == "Choose input method...":
+    st.title(f"Welcome You all!")
+    st.title("Choose an option in the sidebar")
+    st.title("Now, let's get started!") 
+    
         
-prompt1 = st.text_input("______", placeholder="Enter your Question")
+#If User wants to interact with the document
+elif input_method == "Interact with Doc":
+    st.title(f"let's Interact with pdf's")
 
-# Generate response if question is entered
-if prompt1 and "vectors" in st.session_state:
-    document_chain = create_stuff_documents_chain(llm, prompt)
-    retriever = st.session_state.vectors.as_retriever()
-    retrieval_chain = create_retrieval_chain(retriever, document_chain)
-    
-    
-    response = retrieval_chain.invoke({'input': prompt1})
+    prompt1 = st.text_input("______", placeholder="Enter your Question")
 
-    # st.write(response['answer'])
+
+    # Generate response if question is entered
+    if prompt1 and "vectors" in st.session_state:
+        document_chain = create_stuff_documents_chain(llm, prompt)
+        retriever = st.session_state.vectors.as_retriever()
+        retrieval_chain = create_retrieval_chain(retriever, document_chain)
+        
+        
+        response = retrieval_chain.invoke({'input': prompt1})
+
+        # st.write(response['answer'])
+        
+        #Get the respose in the card
+        st.markdown(
+        f"""
+        <div class="card">
+            <div class="response">{response['answer']}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+        
+        
+        
+#When User wants to get questions from the doc based on certain topic
+elif input_method == "Get Ques from Doc":
+    st.title(f"Let's Get Ques from Document")
     
-    #Get the respose in the card
-    st.markdown(
-    f"""
-    <div class="card">
-        <div class="response">{response['answer']}</div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
+    prompt2 = """Based on the topic of {topic}, 
+                kindly provide a comprehensive list of all possible questions that could arise. 
+                For each question, provide detailed and explanatory answers in atleast 1000 words detail based on the context,
+                ensuring that the responses are as informative as possible.
+                make sure you strictly follow the {topic}"""
+    topic = st.text_input("Enter a topic", placeholder="What is your topic")
     
-    
-#Display similar chunks with an expander
-    
-    # similarity = st.button("Show other Response")
-    # if similarity:
-    #     with st.expander("Document Similarity Search"):
-    #         for i, doc in enumerate(response["context"]):
-    #             st.write(doc.page_content)
-    #             st.write("--------------------------------")
-    # else:
-    #     if not uploaded_file:
-    #         st.warning("Please upload a PDF file first.")
-    #     elif not prompt1:
-    #         st.info("Enter a question to query the document.")
-    
+    # Generate response if question is entered
+    if topic and "vectors" in st.session_state:
+        document_chain = create_stuff_documents_chain(llm, prompt)
+        retriever = st.session_state.vectors.as_retriever()
+        retrieval_chain = create_retrieval_chain(retriever, document_chain)
+        
+        
+        response = retrieval_chain.invoke({'input': prompt2})
+        
+        #Get the respose in the card
+        st.markdown(
+        f"""
+        <div class="card">
+            <div class="response">{response['answer']}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
     
